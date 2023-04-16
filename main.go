@@ -22,7 +22,11 @@ func main() {
 
     var address = "localhost:9000"
     fmt.Printf("server started at %s\n", address)
-    err := http.ListenAndServe(address, nil)
+
+    server :=new(http.Server)
+    server.Addr = address
+
+    err := server.ListenAndServe()
     if err != nil {
         fmt.Println(err.Error())
     }
