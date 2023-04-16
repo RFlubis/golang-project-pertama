@@ -26,7 +26,10 @@ func main() {
 
     //routing static assets
     http.Handle("/static/",
+        //wraping the FileServer
+        //refer to https://dasarpemrogramangolang.novalagung.com/B-routing-static-assets.html
         http.StripPrefix("/static/",
+            //get asset folder
             http.FileServer(http.Dir("assets"))))
 
     http.HandleFunc("/", handlerIndex)
