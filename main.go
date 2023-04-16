@@ -3,19 +3,32 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
-
+//routing outside main function
 func handlerIndex(w http.ResponseWriter, r *http.Request) {
     var message = "Welcome"
     w.Write([]byte(message))
 }
 
-func handlerHello(w http.ResponseWriter, r *http.Request) {
-    var message = "Hello world!"
-    w.Write([]byte(message))
-}
+
 
 func main() {
+    //routing inside main function
+    handlerHello := func(w http.ResponseWriter, r *http.Request) {
+        var message = "Hello world!"
+        w.Write([]byte(message))
+    }
+    //anonymous function routing (have to be inside main function)
+    http.HandleFunc("/data",func(w http.ResponseWriter, r *http.Request){
+        w.Write([]byte("hello again"))
+    })
+
+    //routing static assets
+    http.Handle("/static/",
+        http.StripPrefix("/static/",
+            http.FileServer(http.Dir("assets"))))
+
     http.HandleFunc("/", handlerIndex)
     http.HandleFunc("/index", handlerIndex)
     http.HandleFunc("/hello", handlerHello)
@@ -25,6 +38,8 @@ func main() {
 
     server :=new(http.Server)
     server.Addr = address
+    server.ReadTimeout = time.Second * 10
+    server.WriteTimeout = time.Second * 10
 
     err := server.ListenAndServe()
     if err != nil {
