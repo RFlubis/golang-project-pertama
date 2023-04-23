@@ -4,13 +4,31 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+    "html/template"
+    "path"
 )
 //routing outside main function
 func handlerIndex(w http.ResponseWriter, r *http.Request) {
-    var message = "Welcome"
-    w.Write([]byte(message))
-}
+    var filepath = path.Join("views", "index.html")
+    var tmpl, err = template.ParseFiles(filepath)
 
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+    var data = map[string]interface{}{
+        "title": "Learning Golang Web",
+        "name":  "Batman",
+    }
+
+    err = tmpl.Execute(w, data)
+
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+        }
+
+}
 
 
 func main() {
